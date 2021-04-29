@@ -8,12 +8,17 @@ export default [
     },
     {
         path: '/makeTransfer',
-        method: 'get',
+        method: 'post',
         action: homeController.makeTransfer
     },
     {
         path: '/getAccountHashFromHex',
         method: 'get',
         action: homeController.getAccountHashFromHex
+    },
+    {
+        path: '/sendTransfer',
+        method: 'get',
+        action: homeController.sendTransfer
     }
 ];

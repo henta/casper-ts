@@ -630,7 +630,7 @@ export class ExecutableDeployItem implements ToBytes {
      */
     public static newTransfer(
         amount: BigNumberish,
-        target: URef | PublicKey,
+        target: URef | PublicKey | Uint8Array,
         sourcePurse?: URef,
         id: number | null = null
     ) {
@@ -644,6 +644,8 @@ export class ExecutableDeployItem implements ToBytes {
             runtimeArgs.insert('target', CLValue.uref(target));
         } else if (target instanceof PublicKey) {
             runtimeArgs.insert('target', CLValue.byteArray(target.toAccountHash()));
+        } else if (target instanceof Uint8Array) {
+            runtimeArgs.insert('target', CLValue.byteArray(target));
         } else {
             throw new Error('Please specify target');
         }
