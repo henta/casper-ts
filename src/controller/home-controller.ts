@@ -17,7 +17,7 @@ class HomeController {
         const from = params.from;
         const to = params.to;
         let recipientKey;
-        if (to.length == 66) {
+        if (to.length == 66 || to.length == 68) {
             recipientKey = PublicKey.fromHex(to);
         } else if (to.length == 64) {
             recipientKey = decodeBase16(params.to)
