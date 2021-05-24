@@ -17,8 +17,13 @@ export default [
         action: homeController.getAccountHashFromHex
     },
     {
-        path: '/sendTransfer',
-        method: 'get',
-        action: homeController.sendTransfer
+        path: '/makeDelegatorWithoutSign',
+        method: 'post',
+        action: homeController.makeDelegatorWithoutSign
+    },
+    {
+        path: '/makeUnDelegatorWithoutSign',
+        method: 'post',
+        action: homeController.makeUnDelegatorWithoutSign
     }
 ];

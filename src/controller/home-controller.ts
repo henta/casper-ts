@@ -1,6 +1,8 @@
 import HomeService from '../service/home-service';
-import {DeployUtil, PublicKey} from "../lib";
+import {CLValue, DeployUtil, PublicKey, RuntimeArgs} from "../lib";
 import {decodeBase16, encodeBase16} from "..";
+import {ExecutableDeployItem} from "../lib/DeployUtil";
+import * as fs from "fs";
 
 class HomeController {
     private service: HomeService = new HomeService();
@@ -59,10 +61,151 @@ class HomeController {
         ctx.body = JSON.stringify(accountHash);
     };
 
-    // @ts-ignore
-    sendTransfer = async ctx => {
+// @ts-ignore
+    makeDelegatorWithoutSign = async ctx => {
+        const params = ctx.request.body;
+        const chainName = params.chainName;
+        const paymentAmount = params.paymentAmount
+        const ttl = params.ttl;
+        const timestamp = params.timestamp;
+        const gasPrice = params.gasPrice;
+        const sessionWasm = fs.readFileSync('/root/casper-node/target/wasm32-unknown-unknown/release/delegate.wasm');
+        //const sessionWasm = decodeBase16('');
+        let validatorPublickey = params.validatorPublickey;
+        if (validatorPublickey.length == 66) {
+            validatorPublickey = PublicKey.fromHex(validatorPublickey);
+        } else if (validatorPublickey.length == 64) {
+            validatorPublickey = decodeBase16(params.validatorPublickey)
+        }
+        let delegatorPublickey = params.delegatorPublickey;
+        if (delegatorPublickey.length == 66) {
+            delegatorPublickey = PublicKey.fromHex(delegatorPublickey);
+        } else if (delegatorPublickey.length == 64) {
+            delegatorPublickey = decodeBase16(params.delegatorPublickey)
+        }
 
+        const delegateAmount = params.delegateAmount;
+
+        // console.log('chainName' + chainName);
+        // console.log('paymentAmount' + paymentAmount);
+        // console.log('ttl' + ttl);
+        // console.log('timestamp' + timestamp);
+        // console.log('gasPrice' + gasPrice);
+        // console.log('sessionWasm' + sessionWasm);
+        // console.log('validatorPublickey' + validatorPublickey);
+        // console.log('delegatorPublickey' + delegatorPublickey);
+        // console.log('delegateAmount' + delegateAmount);
+
+        const runtimeArgs = RuntimeArgs.fromMap({});
+        runtimeArgs.insert('amount', CLValue.u512(delegateAmount));
+        runtimeArgs.insert('validator', CLValue.publicKey(validatorPublickey));
+        runtimeArgs.insert('delegator', CLValue.publicKey(delegatorPublickey));
+
+        const session = ExecutableDeployItem.newModuleBytes(sessionWasm, runtimeArgs);
+
+        let deployParams = new DeployUtil.DeployParams(
+            delegatorPublickey,
+            chainName,
+            gasPrice,
+            ttl,
+            [],
+            Date.parse(timestamp).valueOf()
+        );
+
+        let payment = DeployUtil.standardPayment(paymentAmount);
+        let deploy = DeployUtil.makeDeploy(deployParams, session, payment);
+
+        // const signerPrivKey = Keys.Ed25519.loadKeyPairFromPrivateFile("/Users/likunmiao/secret_private_c318.pem");
+        // const signerdeploy = signDeploy(deploy, signerPrivKey); //java代码签名
+        // //let hex = DeployUtil.makeDeployHex(deployParams, session, payment);
+        //
+        //
+        // let json = DeployUtil.deployToJson(signerdeploy);
+        //let json = DeployUtil.deployToJson(deploy);
+        // let senddeploy = new CasperClient('http://47.242.213.60:7777/rpc', '');
+        // let deployhash = senddeploy.putDeploy(signerdeploy);
+        // console.log('deployhash:' + (await deployhash).toString());
+        // let result = JSON.parse(JSON.stringify(json));
+        // result.hex = json;
+        // ctx.body = JSON.stringify(result);
+
+        let hex = DeployUtil.makeDeployHex(deployParams, session, payment);
+        let json = DeployUtil.deployToJson(deploy);
+        let result = JSON.parse(JSON.stringify(json));
+        result.hex = hex;
+        ctx.body = JSON.stringify(result);
     };
+
+    // @ts-ignore
+    makeUnDelegatorWithoutSign = async ctx => {
+        const params = ctx.request.body;
+        const chainName = params.chainName;
+        const paymentAmount = params.paymentAmount
+        const ttl = params.ttl;
+        const timestamp = params.timestamp;
+        const gasPrice = params.gasPrice;
+        const sessionWasm = fs.readFileSync('/root/casper-node/target/wasm32-unknown-unknown/release/undelegate.wasm');
+        //const sessionWasm = decodeBase16('');
+        let validatorPublickey = params.validatorPublickey;
+        if (validatorPublickey.length == 66) {
+            validatorPublickey = PublicKey.fromHex(validatorPublickey);
+        } else if (validatorPublickey.length == 64) {
+            validatorPublickey = decodeBase16(params.validatorPublickey)
+        }
+        let delegatorPublickey = params.delegatorPublickey;
+        if (delegatorPublickey.length == 66) {
+            delegatorPublickey = PublicKey.fromHex(delegatorPublickey);
+        } else if (delegatorPublickey.length == 64) {
+            delegatorPublickey = decodeBase16(params.delegatorPublickey)
+        }
+
+        const delegateAmount = params.delegateAmount;
+
+        // console.log('chainName' + chainName);
+        // console.log('paymentAmount' + paymentAmount);
+        // console.log('ttl' + ttl);
+        // console.log('timestamp' + timestamp);
+        // console.log('gasPrice' + gasPrice);
+        // console.log('sessionWasm' + sessionWasm);
+        // console.log('validatorPublickey' + validatorPublickey);
+        // console.log('delegatorPublickey' + delegatorPublickey);
+        // console.log('delegateAmount' + delegateAmount);
+
+        const runtimeArgs = RuntimeArgs.fromMap({});
+        runtimeArgs.insert('amount', CLValue.u512(delegateAmount));
+        runtimeArgs.insert('validator', CLValue.publicKey(validatorPublickey));
+        runtimeArgs.insert('delegator', CLValue.publicKey(delegatorPublickey));
+
+        const session = ExecutableDeployItem.newModuleBytes(sessionWasm, runtimeArgs);
+
+        let deployParams = new DeployUtil.DeployParams(
+            delegatorPublickey,
+            chainName,
+            gasPrice,
+            ttl,
+            [],
+            Date.parse(timestamp).valueOf()
+        );
+
+        let payment = DeployUtil.standardPayment(paymentAmount);
+        let deploy = DeployUtil.makeDeploy(deployParams, session, payment);
+        //const signerPrivKey = Keys.Ed25519.loadKeyPairFromPrivateFile("/Users/likunmiao/secret_private_c318.pem");
+        //const signerdeploy = signDeploy(deploy, signerPrivKey); //java代码签名
+        //let hex = DeployUtil.makeDeployHex(deployParams, session, payment);
+        //let json = DeployUtil.deployToJson(signerdeploy);
+        // let json = DeployUtil.deployToJson(deploy);
+        //let senddeploy = new CasperClient('http://47.242.213.60:7777/rpc', '');
+        //let deployhash = senddeploy.putDeploy(signerdeploy);
+        //console.log('deployhash:' + (await deployhash).toString());
+        // let result = JSON.parse(JSON.stringify(json));
+        // result.hex = json;
+        // ctx.body = JSON.stringify(result);
+        let hex = DeployUtil.makeDeployHex(deployParams, session, payment);
+        let json = DeployUtil.deployToJson(deploy);
+        let result = JSON.parse(JSON.stringify(json));
+        result.hex = hex;
+    };
+
 }
 
 export default new HomeController();
