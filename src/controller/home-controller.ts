@@ -65,7 +65,7 @@ class HomeController {
     makeDelegatorWithoutSign = async ctx => {
         const params = ctx.request.body;
         const chainName = params.chainName;
-        const paymentAmount = params.paymentAmount
+        const fee = params.fee;
         const ttl = params.ttl;
         const timestamp = params.timestamp;
         const gasPrice = params.gasPrice;
@@ -112,7 +112,7 @@ class HomeController {
             Date.parse(timestamp).valueOf()
         );
 
-        let payment = DeployUtil.standardPayment(paymentAmount);
+        let payment = DeployUtil.standardPayment(fee);
         let deploy = DeployUtil.makeDeploy(deployParams, session, payment);
 
         // const signerPrivKey = Keys.Ed25519.loadKeyPairFromPrivateFile("/Users/likunmiao/secret_private_c318.pem");
@@ -140,7 +140,7 @@ class HomeController {
     makeUnDelegatorWithoutSign = async ctx => {
         const params = ctx.request.body;
         const chainName = params.chainName;
-        const paymentAmount = params.paymentAmount
+        const fee = params.fee;
         const ttl = params.ttl;
         const timestamp = params.timestamp;
         const gasPrice = params.gasPrice;
@@ -187,7 +187,7 @@ class HomeController {
             Date.parse(timestamp).valueOf()
         );
 
-        let payment = DeployUtil.standardPayment(paymentAmount);
+        let payment = DeployUtil.standardPayment(fee);
         let deploy = DeployUtil.makeDeploy(deployParams, session, payment);
         //const signerPrivKey = Keys.Ed25519.loadKeyPairFromPrivateFile("/Users/likunmiao/secret_private_c318.pem");
         //const signerdeploy = signDeploy(deploy, signerPrivKey); //java代码签名
