@@ -190,7 +190,7 @@ class HomeController {
         let payment = DeployUtil.standardPayment(fee);
         let deploy = DeployUtil.makeDeploy(deployParams, session, payment);
         //const signerPrivKey = Keys.Ed25519.loadKeyPairFromPrivateFile("/Users/likunmiao/secret_private_c318.pem");
-        //const signerdeploy = signDeploy(deploy, signerPrivKey); //java代码签名
+        // const signerdeploy = signDeploy(deploy, signerPrivKey); //java代码签名
         //let hex = DeployUtil.makeDeployHex(deployParams, session, payment);
         //let json = DeployUtil.deployToJson(signerdeploy);
         // let json = DeployUtil.deployToJson(deploy);
@@ -204,6 +204,7 @@ class HomeController {
         let json = DeployUtil.deployToJson(deploy);
         let result = JSON.parse(JSON.stringify(json));
         result.hex = hex;
+        ctx.body = JSON.stringify(result);
     };
 
 }
