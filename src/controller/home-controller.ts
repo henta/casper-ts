@@ -71,20 +71,20 @@ class HomeController {
         const gasPrice = params.gasPrice;
         const sessionWasm = fs.readFileSync('/root/casper-node/target/wasm32-unknown-unknown/release/delegate.wasm');
         //const sessionWasm = decodeBase16('');
-        let validatorPublickey = params.validatorPublickey;
+        let validatorPublickey = params.to;
         if (validatorPublickey.length == 66) {
             validatorPublickey = PublicKey.fromHex(validatorPublickey);
         } else if (validatorPublickey.length == 64) {
             validatorPublickey = decodeBase16(params.validatorPublickey)
         }
-        let delegatorPublickey = params.delegatorPublickey;
+        let delegatorPublickey = params.from;
         if (delegatorPublickey.length == 66) {
             delegatorPublickey = PublicKey.fromHex(delegatorPublickey);
         } else if (delegatorPublickey.length == 64) {
             delegatorPublickey = decodeBase16(params.delegatorPublickey)
         }
 
-        const delegateAmount = params.delegateAmount;
+        const delegateAmount = params.value;
 
         // console.log('chainName' + chainName);
         // console.log('paymentAmount' + paymentAmount);
@@ -146,20 +146,20 @@ class HomeController {
         const gasPrice = params.gasPrice;
         const sessionWasm = fs.readFileSync('/root/casper-node/target/wasm32-unknown-unknown/release/undelegate.wasm');
         //const sessionWasm = decodeBase16('');
-        let validatorPublickey = params.validatorPublickey;
+        let validatorPublickey = params.to;
         if (validatorPublickey.length == 66) {
             validatorPublickey = PublicKey.fromHex(validatorPublickey);
         } else if (validatorPublickey.length == 64) {
             validatorPublickey = decodeBase16(params.validatorPublickey)
         }
-        let delegatorPublickey = params.delegatorPublickey;
+        let delegatorPublickey = params.from;
         if (delegatorPublickey.length == 66) {
             delegatorPublickey = PublicKey.fromHex(delegatorPublickey);
         } else if (delegatorPublickey.length == 64) {
             delegatorPublickey = decodeBase16(params.delegatorPublickey)
         }
 
-        const delegateAmount = params.delegateAmount;
+        const delegateAmount = params.value;
 
         // console.log('chainName' + chainName);
         // console.log('paymentAmount' + paymentAmount);
