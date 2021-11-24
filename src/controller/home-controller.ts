@@ -1,5 +1,6 @@
 import HomeService from '../service/home-service';
-import {CLValue, DeployUtil, PublicKey, RuntimeArgs} from "../lib";
+import {CLPublicKey, CLValueBuilder, RuntimeArgs} from "../lib";
+import {DeployUtil} from '../../src/lib';
 import {decodeBase16, encodeBase16} from "..";
 import {ExecutableDeployItem} from "../lib/DeployUtil";
 import * as fs from "fs";
@@ -20,7 +21,7 @@ class HomeController {
         const to = params.to;
         let recipientKey;
         if (to.length == 66 || to.length == 68) {
-            recipientKey = PublicKey.fromHex(to);
+            recipientKey = CLPublicKey.fromHex(to);
         } else if (to.length == 64) {
             recipientKey = decodeBase16(params.to)
         }
@@ -29,7 +30,8 @@ class HomeController {
         const ttl = params.ttl;
         const timestamp = params.timestamp;
         const gasPrice = params.gasPrice;
-        const senderKey = PublicKey.fromHex(from);
+        const senderKey = CLPublicKey.fromHex(from);
+        const id = 0;
         let deployParams = new DeployUtil.DeployParams(
             senderKey,
             chainName,
@@ -41,8 +43,9 @@ class HomeController {
         let session = DeployUtil.ExecutableDeployItem.newTransfer(
             value,
             recipientKey,
-            undefined
+            undefined, id
         );
+
         let payment = DeployUtil.standardPayment(fee);
         let deploy = DeployUtil.makeDeploy(deployParams, session, payment);
         let hex = DeployUtil.makeDeployHex(deployParams, session, payment);
@@ -56,7 +59,7 @@ class HomeController {
     getAccountHashFromHex = async ctx => {
         const params = ctx.query;
         const address = params.address;
-        const accountHash = PublicKey.fromHex(address);
+        const accountHash = CLPublicKey.fromHex(address);
         console.log('address', encodeBase16(accountHash.toAccountHash()));
         ctx.body = JSON.stringify(accountHash);
     };
@@ -73,13 +76,13 @@ class HomeController {
         //const sessionWasm = decodeBase16('');
         let validatorPublickey = params.to;
         if (validatorPublickey.length == 66) {
-            validatorPublickey = PublicKey.fromHex(validatorPublickey);
+            validatorPublickey = CLPublicKey.fromHex(validatorPublickey);
         } else if (validatorPublickey.length == 64) {
             validatorPublickey = decodeBase16(params.validatorPublickey)
         }
         let delegatorPublickey = params.from;
         if (delegatorPublickey.length == 66) {
-            delegatorPublickey = PublicKey.fromHex(delegatorPublickey);
+            delegatorPublickey = CLPublicKey.fromHex(delegatorPublickey);
         } else if (delegatorPublickey.length == 64) {
             delegatorPublickey = decodeBase16(params.delegatorPublickey)
         }
@@ -97,9 +100,9 @@ class HomeController {
         // console.log('delegateAmount' + delegateAmount);
 
         const runtimeArgs = RuntimeArgs.fromMap({});
-        runtimeArgs.insert('amount', CLValue.u512(delegateAmount));
-        runtimeArgs.insert('validator', CLValue.publicKey(validatorPublickey));
-        runtimeArgs.insert('delegator', CLValue.publicKey(delegatorPublickey));
+        runtimeArgs.insert('amount', CLValueBuilder.u512(delegateAmount));
+        runtimeArgs.insert('validator', validatorPublickey);
+        runtimeArgs.insert('delegator', delegatorPublickey);
 
         const session = ExecutableDeployItem.newModuleBytes(sessionWasm, runtimeArgs);
 
@@ -148,13 +151,13 @@ class HomeController {
         //const sessionWasm = decodeBase16('');
         let validatorPublickey = params.to;
         if (validatorPublickey.length == 66) {
-            validatorPublickey = PublicKey.fromHex(validatorPublickey);
+            validatorPublickey = CLPublicKey.fromHex(validatorPublickey);
         } else if (validatorPublickey.length == 64) {
             validatorPublickey = decodeBase16(params.validatorPublickey)
         }
         let delegatorPublickey = params.from;
         if (delegatorPublickey.length == 66) {
-            delegatorPublickey = PublicKey.fromHex(delegatorPublickey);
+            delegatorPublickey = CLPublicKey.fromHex(delegatorPublickey);
         } else if (delegatorPublickey.length == 64) {
             delegatorPublickey = decodeBase16(params.delegatorPublickey)
         }
@@ -172,9 +175,9 @@ class HomeController {
         // console.log('delegateAmount' + delegateAmount);
 
         const runtimeArgs = RuntimeArgs.fromMap({});
-        runtimeArgs.insert('amount', CLValue.u512(delegateAmount));
-        runtimeArgs.insert('validator', CLValue.publicKey(validatorPublickey));
-        runtimeArgs.insert('delegator', CLValue.publicKey(delegatorPublickey));
+        runtimeArgs.insert('amount', CLValueBuilder.u512(delegateAmount));
+        runtimeArgs.insert('validator', validatorPublickey);
+        runtimeArgs.insert('delegator', delegatorPublickey);
 
         const session = ExecutableDeployItem.newModuleBytes(sessionWasm, runtimeArgs);
 

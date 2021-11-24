@@ -1,21 +1,60 @@
+import { JsonTypes } from 'typedjson';
+
 interface CasperLabsHelper {
+  /**
+   * Returns Signer version
+   */
+  getVersion: () => Promise<string>;
+
   /**
    * Returns connection status from Signer
    */
   isConnected: () => Promise<boolean>;
+
   /**
    * Attempt connection to Signer
    */
   requestConnection: () => void;
+
   /**
-   * send base16 encoded message to plugin to sign
+   * Send Deploy in JSON format message to Signer plugin to sign.
    *
-   * @param messageBase16 the base16 encoded message that plugin received to sign
-   * @param publicKeyBase64 the base64 encoded public key used to sign the deploy, if set, we will check whether it is the same as the active key for signing the message, otherwise, we won't check.
+   * @param deploy deploy in JSON format
+   * @param sourcePublicKeyHex public key in hex format with algorithm prefix. Used to sign the deploy
+   * @param targetPublicKeyHex public key in hex format with algorithm prefix. Used to display hex-formatted address on the UI
    */
-  sign: (messageBase16: string, publicKeyBase64?: string) => Promise<string>;
-  // returns base64 encoded public key of user current selected account.
+  sign: (
+    deploy: { deploy: JsonTypes },
+    sourcePublicKeyHex: string,
+    targetPublicKeyHex: string
+  ) => Promise<{ deploy: JsonTypes }>;
+
+  /**
+   * Send raw string message to Signer for signing.
+   * @param message string to be signed.
+   * @param signingPublicKey public key in hex format, the corresponding secret key (from the vault) will be used to sign.
+   * @returns `Base16` signature
+   */
+  signMessage: (
+    rawMessage: string,
+    signingPublicKey: string
+  ) => Promise<string>;
+
+  /*
+   * Returns base64 encoded public key of user current selected account.
+   */
   getSelectedPublicKeyBase64: () => Promise<string>;
+
+  /**
+   * Retrieve the active public key.
+   * @returns {string} Hex-encoded public key with algorithm prefix.
+   */
+  getActivePublicKey: () => Promise<string>;
+
+  /*
+   * Forces Signer to disconnect from the currently open site.
+   */
+  disconnectFromSite: () => void;
 }
 
 interface SignerTestingHelper {

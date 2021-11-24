@@ -18,6 +18,7 @@
     "@ethersproject/bignumber": "^5.0.8",
     "@ethersproject/bytes": "^5.0.5",
     "@ethersproject/constants": "^5.0.5",
+    "@o1labs/client-sdk": "^1.0.1",
     "@open-rpc/client-js": "^1.6.2",
     "axios": "^0.21.1",
     "blakejs": "^1.1.0",
@@ -78,6 +79,7 @@
     "tslint-config-prettier": "^1.18.0",
     "typedoc": "^0.17.8",
     "webpack-cli": "^4.5.0",
-    "webpack-node-externals": "^2.5.2"
+    "webpack-node-externals": "^2.5.2",
+    "eccrypto": "^1.1.6"
   }
 }
