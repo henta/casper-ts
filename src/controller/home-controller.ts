@@ -28,7 +28,7 @@ class HomeController {
         const fee = params.fee;
         const chainName = params.chainName;
         const ttl = params.ttl;
-        const timestamp = params.timestamp;
+        let timestamp = Number(params.timestamp);
         const gasPrice = params.gasPrice;
         const senderKey = CLPublicKey.fromHex(from);
         const id = 0;
@@ -38,7 +38,7 @@ class HomeController {
             gasPrice,
             ttl,
             [],
-            Date.parse(timestamp).valueOf()
+            new Date(timestamp).valueOf()
         );
         let session = DeployUtil.ExecutableDeployItem.newTransfer(
             value,
